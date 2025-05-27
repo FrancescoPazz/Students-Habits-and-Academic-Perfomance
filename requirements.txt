@@ -1,0 +1,7 @@
+Flask
+Flask-WTF
+WTForms
+joblib
+scikit-learn
+pandas
+numpy

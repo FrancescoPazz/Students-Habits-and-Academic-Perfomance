@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Student Exam Score Prediction</h2>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    {% for field in form %}
+      <p>
+        {{ field.label }}<br>
+        {{ field(size=32) }}<br>
+        {% for error in field.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </p>
+    {% endfor %}
+    <p><input type="submit" value="Predict"></p>
+  </form>
+{% endblock %}

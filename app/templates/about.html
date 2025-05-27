@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>About</h2>
+  <ul>
+    {% for student in students %}
+      <li><strong>{{ student.name }}</strong>: {{ student.role }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

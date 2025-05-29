@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="step-container">
+    <div class="progress-container">
+        <h2>{{ step_title }}</h2>
+        <div class="progress-bar">
+            <div class="progress" style="width: {{ (current_step / total_steps) * 100 }}%"></div>
+        </div>
+        <p>Step {{ current_step }} of {{ total_steps }}</p>
+    </div>
+
+    <form method="POST" class="step-form">
+        {{ form.hidden_tag() }}
+        
+        {% for field in form %}
+            {% if field.type != 'HiddenField' and field.type != 'CSRFTokenField' and field.name != 'submit' %}
+            <div class="form-group">
+                {{ field.label(class="form-label") }}
+                {% if field.type == 'SelectField' %}
+                    {{ field(class="form-select") }}
+                {% else %}
+                    {{ field(class="form-input") }}
+                {% endif %}
+                {% for error in field.errors %}
+                    <span class="error">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="navigation-buttons">
+            {% if prev_step %}
+                <a href="{{ url_for('main.step', step_name=prev_step) }}" class="btn btn-secondary">Previous</a>
+            {% endif %}
+            
+            {% if is_last_step %}
+                {{ form.submit(class="btn btn-success") }}
+            {% else %}
+                {{ form.submit(class="btn btn-primary") }}
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+{% endblock %}

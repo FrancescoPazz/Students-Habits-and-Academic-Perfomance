@@ -53,8 +53,14 @@ def step(step_name):
     
     form = get_form_for_step(step_name)
     
+    # Pre-compila il form con i dati salvati PRIMA della validazione
+    if request.method == 'GET':
+        for field in form:
+            if field.name in session.get('form_data', {}) and field.name != 'csrf_token':
+                field.data = session['form_data'][field.name]
+    
     if form.validate_on_submit():
-        session['form_data'].update({field.name: field.data for field in form if field.name != 'csrf_token'})
+        session['form_data'].update({field.name: field.data for field in form if field.name not in ['csrf_token', 'submit']})
         session.modified = True
         
         if current_step_index < len(STEP_ORDER) - 1:
@@ -62,11 +68,6 @@ def step(step_name):
             return redirect(url_for('main.step', step_name=next_step))
         else:
             return redirect(url_for('main.predict'))
-    
-    if step_name in session.get('form_data', {}):
-        for field in form:
-            if field.name in session['form_data']:
-                field.data = session['form_data'][field.name]
     
     prev_step = STEP_ORDER[current_step_index - 1] if current_step_index > 0 else None
     next_step = STEP_ORDER[current_step_index + 1] if current_step_index < len(STEP_ORDER) - 1 else None
@@ -119,12 +120,14 @@ def get_form_for_step(step_name):
     
     if step_name == 'demographics':
         major_choices = [(m, m) for m in sorted(df['major'].dropna().unique())]
-        return form_class(major_choices=major_choices)
+        form = form_class(major_choices=major_choices, data=session.get('form_data', {}))
     elif step_name == 'family_socioeconomic':
         internet_choices = [(i, i) for i in sorted(df['internet_quality'].dropna().unique())]
-        return form_class(internet_choices=internet_choices)
+        form = form_class(internet_choices=internet_choices, data=session.get('form_data', {}))
     else:
-        return form_class()
+        form = form_class(data=session.get('form_data', {}))
+    
+    return form
 
 @main.route('/about')
 def about():

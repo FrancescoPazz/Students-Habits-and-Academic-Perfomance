@@ -19,6 +19,10 @@
                 {{ field.label(class="form-label") }}
                 {% if field.type == 'SelectField' %}
                     {{ field(class="form-select") }}
+                {% elif field.type == 'IntegerField' %}
+                    {{ field(class="form-input", type="number") }}
+                {% elif field.type == 'FloatField' %}
+                    {{ field(class="form-input", type="number", step="0.1") }}
                 {% else %}
                     {{ field(class="form-input") }}
                 {% endif %}

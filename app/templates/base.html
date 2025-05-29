@@ -9,8 +9,13 @@
 <body>
   <header>
     <nav>
-      <a href="{{ url_for('main.home') }}">Home</a> |
-      <a href="{{ url_for('main.about') }}">About</a>
+      <div class="nav-links">
+        <a href="{{ url_for('main.home') }}">Home</a>
+        <a href="{{ url_for('main.about') }}">About</a>
+      </div>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
     </nav>
   </header>
 
@@ -23,5 +28,28 @@
   <footer>
     <p>&copy; 2025 Student Performance Inference Web App</p>
   </footer>
+
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.querySelector('.theme-icon');
+    const body = document.body;
+
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    body.setAttribute('data-theme', currentTheme);
+    updateThemeIcon(currentTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon(newTheme);
+    });
+
+    function updateThemeIcon(theme) {
+      themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+  </script>
 </body>
 </html>

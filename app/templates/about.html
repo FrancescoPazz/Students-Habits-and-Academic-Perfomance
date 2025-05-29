@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-  <h2>About</h2>
-  <ul>
-    {% for student in students %}
-      <li><strong>{{ student.name }}</strong>: {{ student.id }}</li>
-    {% endfor %}
-  </ul>
+  <div class="about-container">
+    <h2>About</h2>
+    <ul class="student-list">
+      {% for student in students %}
+        <li><strong>{{ student.name }}</strong>: {{ student.id }}</li>
+      {% endfor %}
+    </ul>
+  </div>
 {% endblock %}

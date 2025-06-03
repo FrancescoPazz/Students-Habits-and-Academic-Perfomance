@@ -1,15 +1,8 @@
-import os
-import pandas as pd
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash
 from .forms import (IdentifiersForm, DemographicsForm, AcademicEngagementForm, 
                    LifestyleHealthForm, ScreenActivityForm, FamilySocioeconomicForm,
                    PersonalSkillsForm, BehaviorPreferencesForm)
 from .model_inference import predict_exam_score
-
-CSV_PATH = os.path.join(os.path.dirname(__file__), '..', 'data',
-                        'enhanced_student_habits_performance_dataset.csv')
-
-df = pd.read_csv(CSV_PATH)
 
 STEP_ORDER = [
     'identifiers',
@@ -116,7 +109,6 @@ def predict():
         return redirect(url_for('main.home'))
 
 def get_form_for_step(step_name):
-    """Restituisce il form appropriato per lo step"""
     forms_map = {
         'identifiers': IdentifiersForm,
         'demographics': DemographicsForm,
@@ -129,22 +121,8 @@ def get_form_for_step(step_name):
     }
     
     form_class = forms_map[step_name]
-    
-    if step_name == 'demographics':
-        major_choices = [(m, m) for m in sorted(df['major'].dropna().unique())]
-        form = form_class(major_choices=major_choices, data=session.get('form_data', {}))
-        
-        saved_major = session.get('form_data', {}).get('major')
-        if saved_major and saved_major not in [choice[0] for choice in major_choices]:
-            form.major.data = 'Other'
-            form.custom_major.data = saved_major
-            
-    elif step_name == 'family_socioeconomic':
-        internet_choices = [(i, i) for i in sorted(df['internet_quality'].dropna().unique())]
-        form = form_class(internet_choices=internet_choices, data=session.get('form_data', {}))
-    else:
-        form = form_class(data=session.get('form_data', {}))
-    
+    form = form_class(data=session.get('form_data', {}))
+
     return form
 
 @main.route('/about')

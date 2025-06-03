@@ -38,7 +38,7 @@
                 {% if field.name == 'major' %}
                     <div id="custom-major-field" style="display: none; margin-top: 0.5rem;">
                         {{ form.custom_major.label(class="form-label") }}
-                        {{ form.custom_major(class="form-input", placeholder="Inserisci la tua major") }}
+                        {{ form.custom_major(class="form-input", placeholder="Insert your major") }}
                         {% for error in form.custom_major.errors %}
                             <span class="error">[{{ error }}]</span>
                         {% endfor %}

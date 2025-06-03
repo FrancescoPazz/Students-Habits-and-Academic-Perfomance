@@ -9,23 +9,16 @@ class IdentifiersForm(FlaskForm):
 class DemographicsForm(FlaskForm):
     age = IntegerField('Age (10-100)', validators=[DataRequired(), NumberRange(min=10, max=100)])
     gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
-    major = SelectField('Major', choices=[])
+    major = SelectField('Major', choices=[('Arts', 'Arts'), ('Biology', 'Biology'), ('Business', 'Business'), ('Computer Science', 'Computer Science'), ('Engineering', 'Engineering'), ('Psychology', 'Psychology'), ('Other', 'Other')])
     custom_major = StringField('Custom Major', validators=[Optional()])
     submit = SubmitField('Next')
-    
-    def __init__(self, major_choices=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if major_choices:
-            self.major.choices = major_choices + [('Other', 'Other')]
-        else:
-            self.major.choices = [('Other', 'Other')]
 
     def validate(self, extra_validators=None):
         if not super().validate(extra_validators):
             return False
         
         if self.major.data == 'Other' and not self.custom_major.data:
-            self.custom_major.errors.append('Inserisci la tua major personalizzata')
+            self.custom_major.errors.append('Insert a custom major if "Other" is selected')
             return False
             
         return True
@@ -60,6 +53,7 @@ class ScreenActivityForm(FlaskForm):
         
         total_screen = (self.screen_productivity_hours.data or 0) + (self.screen_entertainment_hours.data or 0)
         if total_screen > 24:
+            self.screen_productivity_hours.errors.append('Total screen time cannot exceed 24 hours')
             return False
             
         return True
@@ -73,7 +67,7 @@ class FamilySocioeconomicForm(FlaskForm):
                                                 ('Master', 'Master'),
                                                 ('PhD', 'PhD')])
     parental_support_level = IntegerField('Parental Support Level (1-10)', validators=[DataRequired(), NumberRange(min=1, max=10)])
-    internet_quality = SelectField('Internet Quality', choices=[])
+    internet_quality = SelectField('Internet Quality', choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])
     submit = SubmitField('Next')
     
     def __init__(self, internet_choices=None, *args, **kwargs):
@@ -85,18 +79,19 @@ class PersonalSkillsForm(FlaskForm):
     time_management_score = IntegerField('Time Management Score (1-10)', validators=[DataRequired(), NumberRange(min=1, max=10)])
     motivation_level = IntegerField('Motivation Level (1-10)', validators=[DataRequired(), NumberRange(min=1, max=10)])
     learning_style = SelectField('Learning Style', 
-                                choices=[('Visual', 'Visual'), 
-                                       ('Auditory', 'Auditory'), 
-                                       ('Kinesthetic', 'Kinesthetic'), 
-                                       ('Reading/Writing', 'Reading/Writing')])
+                                choices=[('Auditory', 'Auditory'), 
+                                         ('Kinesthetic', 'Kinesthetic'), 
+                                         ('Reading', 'Reading'),
+                                         ('Visual', 'Visual')])
     submit = SubmitField('Next')
 
 class BehaviorPreferencesForm(FlaskForm):
     part_time_job = SelectField('Part-time Job', choices=[('Yes', 'Yes'), ('No', 'No')])
     dropout_risk = SelectField('Dropout Risk', choices=[('Yes', 'Yes'), ('No', 'No')])
     study_environment = SelectField('Study Environment', 
-                                   choices=[('Quiet', 'Quiet'), 
-                                          ('Noisy', 'Noisy'), 
+                                   choices=[('Cafe', 'Cafe'), 
+                                          ('Co-Learning Group', 'Co-Learning Group'), 
+                                          ('Dorm', 'Dorm'),
                                           ('Library', 'Library'),
-                                          ('Home', 'Home')])
+                                          ('Quiet Room', 'Quiet Room')])
     submit = SubmitField('Predict Score')

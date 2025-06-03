@@ -125,6 +125,149 @@ def get_form_for_step(step_name):
 
     return form
 
+@main.route('/test_bad_student')
+def test_bad_student():
+    studente_pessimo = {
+        'age': 19,
+        'gender': 'Male',
+        'major': 'Arts',
+        'semester': 1,
+        'study_hours_per_day': 0.5,
+        'attendance_percentage': 30.0,
+        'access_to_tutoring': 'No',
+        'extracurricular_participation': 'No',
+        'previous_gpa': 1.2,
+        'sleep_hours': 4.0,
+        'diet_quality': 'Poor',
+        'exercise_frequency': 0,
+        'mental_health_rating': 2.0,
+        'stress_level': 9.0,
+        'exam_anxiety_score': 10,
+        'screen_entertainment_hours': 12.0,
+        'screen_productivity_hours': 1.0,
+        'social_activity': 0,
+        'screen_time': 13.0,
+        'family_income_range': 'Low',
+        'parental_education_level': 'High School',
+        'parental_support_level': '1',
+        'internet_quality': 'Low',
+        'time_management_score': 1,
+        'motivation_level': 1,
+        'learning_style': 'Visual',
+        'part_time_job': 'Yes',
+        'dropout_risk': 'Yes',
+        'study_environment': 'Cafe'  
+    }
+    
+    try:
+        score = predict_exam_score(studente_pessimo)
+        
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Test Studente Pessimo</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        </head>
+        <body class="bg-light">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow">
+                            <div class="card-header bg-dark text-white">
+                                <h2 class="mb-0">Test Studente con prestazioni basse</h2>
+                            </div>
+                            <div class="card-body">
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Risultati</h5>
+                                        <table class="table table-sm">
+                                            <tr><td><strong>Exam score:</strong></td><td><span class="badge bg-primary fs-6">{score}</span></td></tr>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <h5>Caratteristiche Negative</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>GPA Precedente:</span><span class="badge bg-danger">{studente_pessimo['previous_gpa']}</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Ore Studio/giorno:</span><span class="badge bg-danger">{studente_pessimo['study_hours_per_day']}</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Frequenza (%):</span><span class="badge bg-danger">{studente_pessimo['attendance_percentage']}</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Salute Mentale:</span><span class="badge bg-danger">{studente_pessimo['mental_health_rating']}/10</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Motivazione:</span><span class="badge bg-danger">{studente_pessimo['motivation_level']}/10</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between">
+                                                <span>Ansia Esami:</span><span class="badge bg-danger">{studente_pessimo['exam_anxiety_score']}/10</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <h5>Tutti i Dati del Test</h5>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6>Accademico</h6>
+                                            <small>
+                                                <strong>Major:</strong> {studente_pessimo['major']}<br>
+                                                <strong>Semestre:</strong> {studente_pessimo['semester']}<br>
+                                                <strong>Tutoraggio:</strong> {studente_pessimo['access_to_tutoring']}<br>
+                                                <strong>Extracurriculari:</strong> {studente_pessimo['extracurricular_participation']}
+                                            </small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>Salute & Lifestyle</h6>
+                                            <small>
+                                                <strong>Ore Sonno:</strong> {studente_pessimo['sleep_hours']}<br>
+                                                <strong>Dieta:</strong> {studente_pessimo['diet_quality']}<br>
+                                                <strong>Esercizio/sett:</strong> {studente_pessimo['exercise_frequency']}<br>
+                                                <strong>Stress:</strong> {studente_pessimo['stress_level']}/10
+                                            </small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>Famiglia</h6>
+                                            <small>
+                                                <strong>Reddito:</strong> {studente_pessimo['family_income_range']}<br>
+                                                <strong>Educazione Genitori:</strong> {studente_pessimo['parental_education_level']}<br>
+                                                <strong>Supporto:</strong> {studente_pessimo['parental_support_level']}/10<br>
+                                                <strong>Internet:</strong> {studente_pessimo['internet_quality']}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 d-flex gap-2">
+                                    <a href="{url_for('main.test_bad_student')}" class="btn btn-success">🌟 Confronta con Studente Eccellente</a>
+                                    <a href="{url_for('main.home')}" class="btn btn-primary">🏠 Torna Home</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+    except Exception as e:
+        import traceback
+        return f"""
+        <h1>Errore nel Test</h1>
+        <p><strong>Errore:</strong> {str(e)}</p>
+        <pre>{traceback.format_exc()}</pre>
+        <a href='{url_for('main.home')}'>Torna Home</a>
+        """
+
+
 @main.route('/about')
 def about():
     students = [

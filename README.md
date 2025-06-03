@@ -4,14 +4,14 @@ Questo è il progetto di Programmazione di Applicazioni Data Intensive del corso
 
 ## Come Iniziare
 
-### 1. Clona il Repository
+### 1. Repository
 
 ```bash
 git clone https://github.com/FrancescoPazz/Students-Habits-and-Academic-Perfomance.git
 cd Students-Habits-and-Academic-Perfomance
 ```
 
-### 2. Crea un Ambiente Virtuale
+### 2. Ambiente Virtuale
 
 ```bash
 # Windows
@@ -29,22 +29,23 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Scarica il Dataset
+### 4. Dataset
 
-Il dataset deve essere scaricato da [Kaggle](https://www.kaggle.com/datasets/aryan208/student-habits-and-academic-performance-dataset) e posizionato in:
+Il dataset è stato scaricato da [Kaggle](https://www.kaggle.com/datasets/aryan208/student-habits-and-academic-performance-dataset) e posizionato in:
 ```
 data/enhanced_student_habits_performance_dataset.csv
 ```
 
-### 5. Esegui il Notebook (Opzionale)
+### 5. Jupyter Notebook
 
-Per ricreare l'analisi e il modello:
+Per aprire il notebook dove è presente l'analisi e i vari modelli bisognerà digitare:
 ```bash
 jupyter notebook student_habits_and_academic_performance.ipynb
 ```
 
-### 6. Avvia l'Applicazione Web
+### 6. Applicativo Web
 
+Per avviare invece l'applicativo web in Flask (con Python) bisognerà digitare: 
 ```bash
 python run.py
 ```

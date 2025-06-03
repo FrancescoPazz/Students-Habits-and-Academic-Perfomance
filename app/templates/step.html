@@ -14,24 +14,50 @@
         {{ form.hidden_tag() }}
         
         {% for field in form %}
-            {% if field.type != 'HiddenField' and field.type != 'CSRFTokenField' and field.name != 'submit' %}
+            {% if field.type != 'HiddenField' and field.type != 'CSRFTokenField' and field.name != 'submit' and field.name != 'custom_major' %}
             <div class="form-group">
                 {{ field.label(class="form-label") }}
                 {% if field.type == 'SelectField' %}
-                    {{ field(class="form-select") }}
+                    {% if field.name == 'major' %}
+                        {{ field(class="form-select", onchange="toggleCustomMajor(this)") }}
+                    {% else %}
+                        {{ field(class="form-select") }}
+                    {% endif %}
                 {% elif field.type == 'IntegerField' %}
                     {{ field(class="form-input", type="number") }}
                 {% elif field.type == 'FloatField' %}
-                    {{ field(class="form-input", type="number", step="0.1") }}
+                    {% if step_name == 'screen_activity' and (field.name == 'screen_productivity_hours' or field.name == 'screen_entertainment_hours') %}
+                        {{ field(class="form-input", type="number", step="0.1", onchange="updateScreenTotal()") }}
+                    {% else %}
+                        {{ field(class="form-input", type="number", step="0.1") }}
+                    {% endif %}
                 {% else %}
                     {{ field(class="form-input") }}
                 {% endif %}
+                
+                {% if field.name == 'major' %}
+                    <div id="custom-major-field" style="display: none; margin-top: 0.5rem;">
+                        {{ form.custom_major.label(class="form-label") }}
+                        {{ form.custom_major(class="form-input", placeholder="Inserisci la tua major") }}
+                        {% for error in form.custom_major.errors %}
+                            <span class="error">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
                 {% for error in field.errors %}
                     <span class="error">[{{ error }}]</span>
                 {% endfor %}
             </div>
             {% endif %}
         {% endfor %}
+
+        {% if step_name == 'screen_activity' %}
+        <div class="form-group">
+            <label class="form-label">Total Screen Time (calculated)</label>
+            <div id="total-screen-time" class="calculated-field">0.0 hours</div>
+        </div>
+        {% endif %}
 
         <div class="navigation-buttons">
             {% if prev_step %}
@@ -46,6 +72,52 @@
         </div>
     </form>
 </div>
+
+<script>
+function toggleCustomMajor(selectElement) {
+    const customField = document.getElementById('custom-major-field');
+    const customInput = customField.querySelector('input');
+    
+    if (selectElement.value === 'Other') {
+        customField.style.display = 'block';
+        customInput.required = true;
+    } else {
+        customField.style.display = 'none';
+        customInput.required = false;
+        customInput.value = '';
+    }
+}
+
+function updateScreenTotal() {
+    const productivityInput = document.querySelector('input[name="screen_productivity_hours"]');
+    const entertainmentInput = document.querySelector('input[name="screen_entertainment_hours"]');
+    const totalDisplay = document.getElementById('total-screen-time');
+    
+    if (productivityInput && entertainmentInput && totalDisplay) {
+        const productivity = parseFloat(productivityInput.value) || 0;
+        const entertainment = parseFloat(entertainmentInput.value) || 0;
+        const total = productivity + entertainment;
+        
+        totalDisplay.textContent = total.toFixed(1) + ' hours';
+        
+        if (total > 24) {
+            totalDisplay.style.color = '#dc3545';
+            totalDisplay.textContent += ' (exceeds 24h)';
+        } else {
+            totalDisplay.style.color = '#4a90e2';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const majorSelect = document.querySelector('select[name="major"]');
+    if (majorSelect && majorSelect.value === 'Other') {
+        toggleCustomMajor(majorSelect);
+    }
+    
+    updateScreenTotal();
+});
+</script>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}

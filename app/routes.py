@@ -53,14 +53,26 @@ def step(step_name):
     
     form = get_form_for_step(step_name)
     
-    # Pre-compila il form con i dati salvati PRIMA della validazione
     if request.method == 'GET':
         for field in form:
             if field.name in session.get('form_data', {}) and field.name != 'csrf_token':
                 field.data = session['form_data'][field.name]
     
     if form.validate_on_submit():
-        session['form_data'].update({field.name: field.data for field in form if field.name not in ['csrf_token', 'submit']})
+        form_data_to_save = {}
+        for field in form:
+            if field.name not in ['csrf_token', 'submit']:
+                if field.name == 'major' and field.data == 'Other':
+                    form_data_to_save['major'] = form.custom_major.data
+                elif field.name != 'custom_major':
+                    form_data_to_save[field.name] = field.data
+        
+        if step_name == 'screen_activity':
+            screen_productivity = form_data_to_save.get('screen_productivity_hours', 0)
+            screen_entertainment = form_data_to_save.get('screen_entertainment_hours', 0)
+            form_data_to_save['screen_time'] = screen_productivity + screen_entertainment
+        
+        session['form_data'].update(form_data_to_save)
         session.modified = True
         
         if current_step_index < len(STEP_ORDER) - 1:
@@ -121,6 +133,12 @@ def get_form_for_step(step_name):
     if step_name == 'demographics':
         major_choices = [(m, m) for m in sorted(df['major'].dropna().unique())]
         form = form_class(major_choices=major_choices, data=session.get('form_data', {}))
+        
+        saved_major = session.get('form_data', {}).get('major')
+        if saved_major and saved_major not in [choice[0] for choice in major_choices]:
+            form.major.data = 'Other'
+            form.custom_major.data = saved_major
+            
     elif step_name == 'family_socioeconomic':
         internet_choices = [(i, i) for i in sorted(df['internet_quality'].dropna().unique())]
         form = form_class(internet_choices=internet_choices, data=session.get('form_data', {}))

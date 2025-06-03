@@ -417,3 +417,15 @@ footer {
   .navigation-buttons, .progress-bar, header nav, .theme-toggle { display: none; }
   .step-container { box-shadow: none; border: 1px solid #ccc; }
 }
+
+.calculated-field {
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1rem;
+  border: 2px dashed var(--primary);
+  text-align: center;
+  transition: all 0.3s ease;
+}

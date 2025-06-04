@@ -1,131 +1,98 @@
 {% extends "base.html" %}
+{% block title %}{{ step_title }}{% endblock %}
 
 {% block content %}
-<div class="step-container">
-    <div class="progress-container">
-        <h2>{{ step_title }}</h2>
-        <div class="progress-bar">
-            <div class="progress" style="width: {{ (current_step / total_steps) * 100 }}%"></div>
-        </div>
-        <p>Step {{ current_step }} of {{ total_steps }}</p>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="text-center mb-4">
+      <h2 class="text-primary">
+        <i class="bi bi-{% if step_name == 'identifiers' %}person-badge{% elif step_name == 'demographics' %}people{% elif step_name == 'academic_engagement' %}mortarboard{% elif step_name == 'lifestyle_health' %}heart-pulse{% elif step_name == 'screen_activity' %}laptop{% elif step_name == 'family_socioeconomic' %}house-heart{% elif step_name == 'personal_skills' %}brain{% else %}gear{% endif %} me-2"></i>
+        {{ step_title }}
+      </h2>
+      <div class="progress mb-2">
+        <div class="progress-bar bg-primary" style="width: {{ (current_step / total_steps) * 100 }}%"></div>
+      </div>
+      <small class="text-muted">Step {{ current_step }} of {{ total_steps }}</small>
     </div>
-
-    <form method="POST" class="step-form">
-        {{ form.hidden_tag() }}
-        
+    
+    <form method="POST">
+      {{ form.hidden_tag() }}
+      
+      <div class="row g-3">
         {% for field in form %}
-            {% if field.type != 'HiddenField' and field.type != 'CSRFTokenField' and field.name != 'submit' and field.name != 'custom_major' %}
-            <div class="form-group">
-                {{ field.label(class="form-label") }}
-                {% if field.type == 'SelectField' %}
-                    {% if field.name == 'major' %}
-                        {{ field(class="form-select", onchange="toggleCustomMajor(this)") }}
-                    {% else %}
-                        {{ field(class="form-select") }}
-                    {% endif %}
-                {% elif field.type == 'IntegerField' %}
-                    {{ field(class="form-input", type="number") }}
-                {% elif field.type == 'FloatField' %}
-                    {% if step_name == 'screen_activity' and (field.name == 'screen_productivity_hours' or field.name == 'screen_entertainment_hours') %}
-                        {{ field(class="form-input", type="number", step="0.1", onchange="updateScreenTotal()") }}
-                    {% else %}
-                        {{ field(class="form-input", type="number", step="0.1") }}
-                    {% endif %}
-                {% else %}
-                    {{ field(class="form-input") }}
-                {% endif %}
-                
-                {% if field.name == 'major' %}
-                    <div id="custom-major-field" style="display: none; margin-top: 0.5rem;">
-                        {{ form.custom_major.label(class="form-label") }}
-                        {{ form.custom_major(class="form-input", placeholder="Insert your major") }}
-                        {% for error in form.custom_major.errors %}
-                            <span class="error">[{{ error }}]</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                
-                {% for error in field.errors %}
-                    <span class="error">[{{ error }}]</span>
-                {% endfor %}
-            </div>
-            {% endif %}
-        {% endfor %}
-
-        {% if step_name == 'screen_activity' %}
-        <div class="form-group">
-            <label class="form-label">Total Screen Time (calculated)</label>
-            <div id="total-screen-time" class="calculated-field">0.0 hours</div>
-        </div>
-        {% endif %}
-
-        <div class="navigation-buttons">
-            {% if prev_step %}
-                <a href="{{ url_for('main.step', step_name=prev_step) }}" class="btn btn-secondary">Previous</a>
+          {% if field.type not in ['HiddenField', 'CSRFTokenField', 'SubmitField'] and field.name != 'custom_major' %}
+          <div class="col-md-6">
+            {{ field.label(class="form-label fw-semibold") }}
+            {% if field.type == 'SelectField' %}
+              {% if field.name == 'major' %}
+                {{ field(class="form-select", onchange="toggleCustomMajor(this)") }}
+              {% else %}
+                {{ field(class="form-select") }}
+              {% endif %}
+            {% else %}
+              {{ field(class="form-control") }}
             {% endif %}
             
-            {% if is_last_step %}
-                {{ form.submit(class="btn btn-success") }}
-            {% else %}
-                {{ form.submit(class="btn btn-primary") }}
+            {% if field.name == 'major' %}
+              <div id="custom-major-field" class="mt-2" style="display: none;">
+                {{ form.custom_major.label(class="form-label fw-semibold") }}
+                {{ form.custom_major(class="form-control") }}
+              </div>
             {% endif %}
-        </div>
+            
+            {% for error in field.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if step_name == 'screen_activity' %}
+      <div class="alert alert-info mt-4">
+        <strong>Total Screen Time:</strong> <span id="total-screen-time">0 hours</span>
+      </div>
+      {% endif %}
+
+      <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+        {% if prev_step %}
+          <a href="{{ url_for('main.step', step_name=prev_step) }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Previous
+          </a>
+        {% else %}
+          <div></div>
+        {% endif %}
+        
+        {% if is_last_step %}
+          {{ form.submit(class="btn btn-success btn-lg", value="Get Prediction") }}
+        {% else %}
+          {{ form.submit(class="btn btn-primary", value="Next →") }}
+        {% endif %}
+      </div>
     </form>
+  </div>
 </div>
 
 <script>
-function toggleCustomMajor(selectElement) {
-    const customField = document.getElementById('custom-major-field');
-    const customInput = customField.querySelector('input');
-    
-    if (selectElement.value === 'Other') {
-        customField.style.display = 'block';
-        customInput.required = true;
-    } else {
-        customField.style.display = 'none';
-        customInput.required = false;
-        customInput.value = '';
-    }
+function toggleCustomMajor(select) {
+  const field = document.getElementById('custom-major-field');
+  field.style.display = select.value === 'Other' ? 'block' : 'none';
 }
 
 function updateScreenTotal() {
-    const productivityInput = document.querySelector('input[name="screen_productivity_hours"]');
-    const entertainmentInput = document.querySelector('input[name="screen_entertainment_hours"]');
-    const totalDisplay = document.getElementById('total-screen-time');
-    
-    if (productivityInput && entertainmentInput && totalDisplay) {
-        const productivity = parseFloat(productivityInput.value) || 0;
-        const entertainment = parseFloat(entertainmentInput.value) || 0;
-        const total = productivity + entertainment;
-        
-        totalDisplay.textContent = total.toFixed(1) + ' hours';
-        
-        if (total > 24) {
-            totalDisplay.style.color = '#dc3545';
-            totalDisplay.textContent += ' (exceeds 24h)';
-        } else {
-            totalDisplay.style.color = '#4a90e2';
-        }
-    }
+  const prod = parseFloat(document.querySelector('[name="screen_productivity_hours"]')?.value) || 0;
+  const ent = parseFloat(document.querySelector('[name="screen_entertainment_hours"]')?.value) || 0;
+  document.getElementById('total-screen-time').textContent = (prod + ent).toFixed(1) + ' hours';
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const majorSelect = document.querySelector('select[name="major"]');
-    if (majorSelect && majorSelect.value === 'Other') {
-        toggleCustomMajor(majorSelect);
-    }
-    
-    updateScreenTotal();
+document.addEventListener('DOMContentLoaded', () => {
+  const major = document.querySelector('[name="major"]');
+  if (major?.value === 'Other') toggleCustomMajor(major);
+  updateScreenTotal();
+  
+  ['screen_productivity_hours', 'screen_entertainment_hours'].forEach(name => {
+    document.querySelector(`[name="${name}"]`)?.addEventListener('input', updateScreenTotal);
+  });
 });
 </script>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="flash-messages">
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-{% endwith %}
 {% endblock %}

@@ -1,11 +1,44 @@
-{% extends "base.html" %}
-{% block content %}
-  <div class="about-container">
-    <h2>About</h2>
-    <ul class="student-list">
-      {% for student in students %}
-        <li><strong>{{ student.name }}</strong>: {{ student.id }}</li>
-      {% endfor %}
-    </ul>
+{% extends "base.html" %} {% block title %}About{% endblock %} {% block content
+%}
+<div class="text-center mb-4">
+  <h1 class="text-primary">
+    <i class="bi bi-mortarboard-fill me-2"></i>About Our Project
+  </h1>
+  <p class="lead text-muted">
+    Machine learning for academic performance prediction
+  </p>
+</div>
+
+<div class="row justify-content-center mb-4">
+  {% for student in students %}
+  <div class="col-md-6 mb-3">
+    <div class="card">
+      <div class="card-body text-center">
+        <i class="bi bi-person-fill display-4 text-primary mb-2"></i>
+        <h5 class="text-primary">{{ student.name }}</h5>
+        <span class="badge bg-primary">{{ student.id }}</span>
+      </div>
+    </div>
   </div>
+  {% endfor %}
+</div>
+
+<div class="row g-3 text-center">
+  <div class="col-md-3">
+    <i class="bi bi-filetype-py display-4 text-primary"></i>
+    <h6>Python</h6>
+  </div>
+  <div class="col-md-3">
+    <i class="bi bi-server display-4 text-success"></i>
+    <h6>Flask</h6>
+  </div>
+  <div class="col-md-3">
+    <i class="bi bi-robot display-4 text-warning"></i>
+    <h6>ML</h6>
+  </div>
+  <div class="col-md-3">
+    <i class="bi bi-bootstrap-fill display-4 text-info"></i>
+    <h6>Bootstrap</h6>
+  </div>
+</div>
 {% endblock %}

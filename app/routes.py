@@ -31,7 +31,13 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def home():
     session.clear()
+    return render_template('home.html')
+
+@main.route('/start')
+def start_prediction():
+    session.clear()
     return redirect(url_for('main.step', step_name='identifiers'))
+
 
 @main.route('/step/<step_name>', methods=['GET', 'POST'])
 def step(step_name):
@@ -57,8 +63,11 @@ def step(step_name):
             if field.name not in ['csrf_token', 'submit']:
                 if field.name == 'major' and field.data == 'Other':
                     form_data_to_save['major'] = form.custom_major.data
+                elif field.name == 'parental_support_level':
+                    form_data_to_save['parental_support_level'] = str(field.data)
                 elif field.name != 'custom_major':
                     form_data_to_save[field.name] = field.data
+
         
         if step_name == 'screen_activity':
             screen_productivity = form_data_to_save.get('screen_productivity_hours', 0)

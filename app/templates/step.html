@@ -1,98 +1,114 @@
-{% extends "base.html" %}
-{% block title %}{{ step_title }}{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}{{ step_title }}{% endblock %} {%
+block content %}
 <div class="row justify-content-center">
   <div class="col-lg-8">
     <div class="text-center mb-4">
       <h2 class="text-primary">
-        <i class="bi bi-{% if step_name == 'identifiers' %}person-badge{% elif step_name == 'demographics' %}people{% elif step_name == 'academic_engagement' %}mortarboard{% elif step_name == 'lifestyle_health' %}heart-pulse{% elif step_name == 'screen_activity' %}laptop{% elif step_name == 'family_socioeconomic' %}house-heart{% elif step_name == 'personal_skills' %}brain{% else %}gear{% endif %} me-2"></i>
+        <i
+          class="bi bi-{% if step_name == 'identifiers' %}person-badge
+          {% elif step_name == 'demographics' %}people
+          {% elif step_name == 'academic_engagement' %}mortarboard
+          {% elif step_name == 'lifestyle_health' %}heart-pulse
+          {% elif step_name == 'screen_activity' %}laptop
+          {% elif step_name == 'family_socioeconomic' %}house-heart
+          {% elif step_name == 'personal_skills' %}brain
+          {% else %}gear
+          {% endif %} 
+          me-2"
+        ></i>
         {{ step_title }}
       </h2>
       <div class="progress mb-2">
-        <div class="progress-bar bg-primary" style="width: {{ (current_step / total_steps) * 100 }}%"></div>
+        <div
+          class="progress-bar bg-primary"
+          style="width: {{ (current_step / total_steps) * 100 }}%"
+        ></div>
       </div>
-      <small class="text-muted">Step {{ current_step }} of {{ total_steps }}</small>
+      <small class="text-muted"
+        >Step {{ current_step }} of {{ total_steps }}</small
+      >
     </div>
-    
+
     <form method="POST">
       {{ form.hidden_tag() }}
-      
+
       <div class="row g-3">
-        {% for field in form %}
-          {% if field.type not in ['HiddenField', 'CSRFTokenField', 'SubmitField'] and field.name != 'custom_major' %}
-          <div class="col-md-6">
-            {{ field.label(class="form-label fw-semibold") }}
-            {% if field.type == 'SelectField' %}
-              {% if field.name == 'major' %}
-                {{ field(class="form-select", onchange="toggleCustomMajor(this)") }}
-              {% else %}
-                {{ field(class="form-select") }}
-              {% endif %}
-            {% else %}
-              {{ field(class="form-control") }}
-            {% endif %}
-            
-            {% if field.name == 'major' %}
-              <div id="custom-major-field" class="mt-2" style="display: none;">
-                {{ form.custom_major.label(class="form-label fw-semibold") }}
-                {{ form.custom_major(class="form-control") }}
-              </div>
-            {% endif %}
-            
-            {% for error in field.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
+        {% for field in form %} {% if field.type not in ['HiddenField',
+        'CSRFTokenField', 'SubmitField'] and field.name != 'custom_major' %}
+        <div class="col-md-6">
+          {{ field.label(class="form-label fw-semibold") }} {% if field.type ==
+          'SelectField' %} {% if field.name == 'major' %} {{
+          field(class="form-select", onchange="toggleCustomMajor(this)") }} {%
+          else %} {{ field(class="form-select") }} {% endif %} {% else %} {{
+          field(class="form-control") }} {% endif %} {% if field.name == 'major'
+          %}
+          <div id="custom-major-field" class="mt-2" style="display: none">
+            {{ form.custom_major.label(class="form-label fw-semibold") }} {{
+            form.custom_major(class="form-control") }}
           </div>
-          {% endif %}
-        {% endfor %}
+          {% endif %} {% for error in field.errors %}
+          <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+        {% endif %} {% endfor %}
       </div>
 
       {% if step_name == 'screen_activity' %}
       <div class="alert alert-info mt-4">
-        <strong>Total Screen Time:</strong> <span id="total-screen-time">0 hours</span>
+        <strong>Total Screen Time:</strong>
+        <span id="total-screen-time">0 hours</span>
       </div>
       {% endif %}
 
       <div class="d-flex justify-content-between mt-4 pt-3 border-top">
         {% if prev_step %}
-          <a href="{{ url_for('main.step', step_name=prev_step) }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>Previous
-          </a>
+        <a
+          href="{{ url_for('main.step', step_name=prev_step) }}"
+          class="btn btn-outline-secondary"
+        >
+          <i class="bi bi-arrow-left me-1"></i>Previous
+        </a>
         {% else %}
-          <div></div>
-        {% endif %}
-        
-        {% if is_last_step %}
-          {{ form.submit(class="btn btn-success btn-lg", value="Get Prediction") }}
-        {% else %}
-          {{ form.submit(class="btn btn-primary", value="Next →") }}
-        {% endif %}
+        <div></div>
+        {% endif %} {% if is_last_step %} {{ form.submit(class="btn btn-success
+        btn-lg", value="Get Prediction") }} {% else %} {{ form.submit(class="btn
+        btn-primary", value="Next →") }} {% endif %}
       </div>
     </form>
   </div>
 </div>
 
 <script>
-function toggleCustomMajor(select) {
-  const field = document.getElementById('custom-major-field');
-  field.style.display = select.value === 'Other' ? 'block' : 'none';
-}
+  function toggleCustomMajor(select) {
+    const field = document.getElementById("custom-major-field");
+    field.style.display = select.value === "Other" ? "block" : "none";
+  }
 
-function updateScreenTotal() {
-  const prod = parseFloat(document.querySelector('[name="screen_productivity_hours"]')?.value) || 0;
-  const ent = parseFloat(document.querySelector('[name="screen_entertainment_hours"]')?.value) || 0;
-  document.getElementById('total-screen-time').textContent = (prod + ent).toFixed(1) + ' hours';
-}
+  function updateScreenTotal() {
+    const prod =
+      parseFloat(
+        document.querySelector('[name="screen_productivity_hours"]')?.value
+      ) || 0;
+    const ent =
+      parseFloat(
+        document.querySelector('[name="screen_entertainment_hours"]')?.value
+      ) || 0;
+    document.getElementById("total-screen-time").textContent =
+      (prod + ent).toFixed(1) + " hours";
+  }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const major = document.querySelector('[name="major"]');
-  if (major?.value === 'Other') toggleCustomMajor(major);
-  updateScreenTotal();
-  
-  ['screen_productivity_hours', 'screen_entertainment_hours'].forEach(name => {
-    document.querySelector(`[name="${name}"]`)?.addEventListener('input', updateScreenTotal);
+  document.addEventListener("DOMContentLoaded", () => {
+    const major = document.querySelector('[name="major"]');
+    if (major?.value === "Other") toggleCustomMajor(major);
+    updateScreenTotal();
+
+    ["screen_productivity_hours", "screen_entertainment_hours"].forEach(
+      (name) => {
+        document
+          .querySelector(`[name="${name}"]`)
+          ?.addEventListener("input", updateScreenTotal);
+      }
+    );
   });
-});
 </script>
 {% endblock %}

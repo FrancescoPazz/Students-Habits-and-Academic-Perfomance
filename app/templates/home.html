@@ -1,18 +1,15 @@
-{% extends "base.html" %}
-{% block title %}Home{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
 <div class="text-center">
-  <h1 class="display-4 text-primary mb-3">
-    Student Performance Predictor
-  </h1>
-  
-  <p class="lead text-muted mb-5">
-    Predict your exam score using regression
-  </p>
+  <h1 class="display-4 text-primary mb-3">Student Performance Predictor</h1>
+
+  <p class="lead text-muted mb-5">Predict your exam score using regression</p>
 
   <div class="d-grid gap-2 col-md-6 mx-auto">
-    <a href="{{ url_for('main.start_prediction') }}" class="btn btn-primary btn-lg">
+    <a
+      href="{{ url_for('main.start_prediction') }}"
+      class="btn btn-primary btn-lg"
+    >
       Start Prediction
     </a>
   </div>

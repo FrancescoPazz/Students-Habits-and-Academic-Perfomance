@@ -61,11 +61,9 @@ def step(step_name):
         form_data_to_save = {}
         for field in form:
             if field.name not in ['csrf_token', 'submit']:
-                if field.name == 'major' and field.data == 'Other':
-                    form_data_to_save['major'] = form.custom_major.data
-                elif field.name == 'parental_support_level':
+                if field.name == 'parental_support_level':
                     form_data_to_save['parental_support_level'] = str(field.data)
-                elif field.name != 'custom_major':
+                else:
                     form_data_to_save[field.name] = field.data
 
         

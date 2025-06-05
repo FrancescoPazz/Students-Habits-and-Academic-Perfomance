@@ -34,19 +34,14 @@ block content %}
 
       <div class="row g-3">
         {% for field in form %} {% if field.type not in ['HiddenField',
-        'CSRFTokenField', 'SubmitField'] and field.name != 'custom_major' %}
+        'CSRFTokenField', 'SubmitField'] %}
         <div class="col-md-6">
           {{ field.label(class="form-label fw-semibold") }} {% if field.type ==
           'SelectField' %} {% if field.name == 'major' %} {{
-          field(class="form-select", onchange="toggleCustomMajor(this)") }} {%
+          field(class="form-select") }} {%
           else %} {{ field(class="form-select") }} {% endif %} {% else %} {{
-          field(class="form-control") }} {% endif %} {% if field.name == 'major'
-          %}
-          <div id="custom-major-field" class="mt-2" style="display: none">
-            {{ form.custom_major.label(class="form-label fw-semibold") }} {{
-            form.custom_major(class="form-control") }}
-          </div>
-          {% endif %} {% for error in field.errors %}
+          field(class="form-control") }} {% endif %}
+          {% for error in field.errors %}
           <div class="text-danger small">{{ error }}</div>
           {% endfor %}
         </div>
@@ -79,11 +74,6 @@ block content %}
 </div>
 
 <script>
-  function toggleCustomMajor(select) {
-    const field = document.getElementById("custom-major-field");
-    field.style.display = select.value === "Other" ? "block" : "none";
-  }
-
   function updateScreenTotal() {
     const prod =
       parseFloat(
@@ -98,10 +88,7 @@ block content %}
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const major = document.querySelector('[name="major"]');
-    if (major?.value === "Other") toggleCustomMajor(major);
     updateScreenTotal();
-
     ["screen_productivity_hours", "screen_entertainment_hours"].forEach(
       (name) => {
         document

@@ -9,19 +9,8 @@ class IdentifiersForm(FlaskForm):
 class DemographicsForm(FlaskForm):
     age = IntegerField('Age (10-100)', validators=[DataRequired(), NumberRange(min=10, max=100)])
     gender = SelectField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
-    major = SelectField('Major', choices=[('Arts', 'Arts'), ('Biology', 'Biology'), ('Business', 'Business'), ('Computer Science', 'Computer Science'), ('Engineering', 'Engineering'), ('Psychology', 'Psychology'), ('Other', 'Other')])
-    custom_major = StringField('Custom Major', validators=[Optional()])
+    major = SelectField('Major', choices=[('Arts', 'Arts'), ('Biology', 'Biology'), ('Business', 'Business'), ('Computer Science', 'Computer Science'), ('Engineering', 'Engineering'), ('Psychology', 'Psychology')])
     submit = SubmitField('Next')
-
-    def validate(self, extra_validators=None):
-        if not super().validate(extra_validators):
-            return False
-        
-        if self.major.data == 'Other' and not self.custom_major.data:
-            self.custom_major.errors.append('Insert a custom major if "Other" is selected')
-            return False
-            
-        return True
 
 class AcademicEngagementForm(FlaskForm):
     semester = IntegerField('Semester (1-8)', validators=[DataRequired(), NumberRange(min=1, max=8)])

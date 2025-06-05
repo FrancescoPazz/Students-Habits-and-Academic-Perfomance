@@ -21,9 +21,13 @@ venv\Scripts\activate
 # macOS/Linux
 python3 -m venv venv
 source venv/bin/activate
+
+# tramite conda
+conda create -n venv
+conda activate venv
 ```
 
-### 3. Installa le Dipendenze
+### 3. Dipendenze
 
 ```bash
 pip install -r requirements.txt
